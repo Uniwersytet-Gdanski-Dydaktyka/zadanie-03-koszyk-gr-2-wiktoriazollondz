@@ -1,12 +1,13 @@
-Decyzje Projektowe - System Koszyka JavaMarkt
-Wybór wzorca projektowego: Strategia (Strategy)
-Do implementacji systemu promocji wybrano wzorzec Strategia z następujących powodów:
+## Wybór Wzorca Projektowego: Strategia (Strategy Pattern)
 
-Dynamiczna zmiana zachowania: Zadanie wymaga, aby promocje mogły się zmieniać w trakcie działania programu. Strategia pozwala na wstrzykiwanie różnych algorytmów obliczania zniżek do klasy Cart bez modyfikowania jej kodu źródłowego.
+W celu implementacji systemu promocji zdecydowano się na zastosowanie wzorca projektowego **Strategia (Strategy)**. 
 
-Zasada Open/Closed (SOLID): System jest otwarty na rozszerzenia (możemy dodać klasę BlackFridayDiscount), ale zamknięty na modyfikacje (nie musimy edytować klasy Cart, aby dodać nową logikę).
+### Uzasadnienie wyboru:
+* **Dynamiczna wymiana logiki:** Specyfikacja zadania zakłada, że promocje mogą się dynamicznie zmieniać w trakcie działania programu (pojawiać się nowe, znikać stare). Wzorzec Strategia pozwala na wstrzykiwanie algorytmów obliczania zniżek przez interfejs `DiscountStrategy`, co uniezależnia klasę `Cart` od konkretnych implementacji promocji.
 
-Złożoność obliczeń: Niektóre promocje (jak 2+1) wymagają operacji na całej kolekcji produktów, a inne (jak procent od sumy) tylko na wartościach. Strategia pozwala odizolować tę logikę w osobnych klasach, co ułatwia testowanie jednostkowe każdej promocji z osobna.
+* **Zgodność z Open/Closed Principle (OCP):** Dodanie nowej promocji (np. kuponu rabatowego 30%) nie wymaga żadnych modyfikacji w istniejącym kodzie klasy `Cart` ani w innych strategiach. Wystarczy stworzyć nową klasę implementującą interfejs `DiscountStrategy`.
 
-Dlaczego nie Command?
-Wzorzec Command byłby lepszy, gdybyśmy potrzebowali funkcji "Cofnij" (Undo) dla każdej dodanej promocji lub gdybyśmy chcieli kolejkować operacje do wykonania w przyszłości. W obecnej specyfikacji głównym wyzwaniem jest logika naliczania rabatu, a nie zarządzanie historią operacji.
+* **Zadanie dodatkowe (Optymalizator):** Zastosowanie wzorca Strategia umożliwiło łatwe zaimplementowanie klasy `DiscountOptimizer`. Dzięki jednolitemu interfejsowi, optymalizator może w pętli przeliterować po liście dostępnych strategii, wywołać metodę `apply()` na kopii koszyka i bezinwazyjnie porównać, która opcja jest najkorzystniejsza dla klienta.
+
+### Dlaczego nie wzorzec Dowództwo (Command)?
+Wzorzec *Command* doskonale sprawdza się w systemach wymagających operacji wycofywania zmian (Undo/Redo) lub kolejkowania zadań (np. "kliknięto przycisk, dodaj do kolejki zamówień"). W realiach prostego naliczania rabatów w koszyku, gdzie kluczowa jest elastyczność kalkulacji ceny końcowej na żądanie, narzut klas tworzonych przez wzorzec Command byłby zbędną komplikacją systemu (*Overengineering*).

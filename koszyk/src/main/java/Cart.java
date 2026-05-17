@@ -27,16 +27,33 @@ public class Cart {
         return new ArrayList<>(this.products);
     }
     
-    // Dodaj to do Cart.java
     public Product getCheapest() {
+        if (products.isEmpty()) return null;
         return products.stream()
-                .min(ProductComparator.DEFAULT) // Używamy Twojego komparatora!
+                .min(java.util.Comparator.comparingDouble(Product::price))
                 .orElse(null);
     }
 
     public Product getMostExpensive() {
+        if (products.isEmpty()) return null;
         return products.stream()
-                .max(ProductComparator.DEFAULT)
+                .max(java.util.Comparator.comparingDouble(Product::price))
                 .orElse(null);
+    }
+
+    // Wyszukiwanie N najtańszych produktów
+    public List<Product> getNCheapest(int n) {
+        return products.stream()
+                .sorted(java.util.Comparator.comparingDouble(Product::price))
+                .limit(n)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    // Wyszukiwanie N najdroższych produktów
+    public List<Product> getNMostExpensive(int n) {
+        return products.stream()
+                .sorted(java.util.Comparator.comparingDouble(Product::price).reversed())
+                .limit(n)
+                .collect(java.util.stream.Collectors.toList());
     }
 }

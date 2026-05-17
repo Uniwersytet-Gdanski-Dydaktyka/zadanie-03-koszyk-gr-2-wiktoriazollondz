@@ -2,15 +2,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// Interfejs strategii
 interface DiscountStrategy {
     List<Product> apply(List<Product> products);
 }
 
-// Kontener na wszystkie promocje
 public class Discounts {
 
-    // 1. Powyżej 300 zł -> 5% zniżki
+    // powyżej 300 zł -> 5% zniżki
     public static class ValueThresholdDiscount implements DiscountStrategy {
         public List<Product> apply(List<Product> products) {
             double total = products.stream().mapToDouble(Product::price).sum();
@@ -23,19 +21,19 @@ public class Discounts {
         }
     }
 
-    // 2. 2+1 Gratis (najtańszy gratis)
+    // 2+1 gratis
     public static class Buy2Get1FreeDiscount implements DiscountStrategy {
         public List<Product> apply(List<Product> products) {
             if (products.size() < 3) return products;
             List<Product> sorted = new ArrayList<>(products);
-            sorted.sort(ProductComparator.DEFAULT); // Najtańszy wyląduje na końcu przez reversed()
+            sorted.sort(ProductComparator.DEFAULT); // najtańszy wyląduje na końcu przez reversed()
             int lastIndex = sorted.size() - 1;
             sorted.set(lastIndex, sorted.get(lastIndex).withDiscountPrice(0.0));
             return sorted;
         }
     }
 
-    // 3. Darmowy kubek powyżej 200 zł
+    // darmowy kubek powyżej 200 zł
     public static class FreeGiftDiscount implements DiscountStrategy {
         public List<Product> apply(List<Product> products) {
             double total = products.stream().mapToDouble(Product::price).sum();
