@@ -10,8 +10,8 @@ public class Cart {
         this.products = strategy.apply(this.products);
     }
 
-    public void sort() {
-        this.products.sort(ProductComparator.DEFAULT);
+    public void sort(java.util.Comparator<Product> comparator) {
+        this.products.sort(comparator);
     }
 
     public double getTotal() {
@@ -41,7 +41,6 @@ public class Cart {
                 .orElse(null);
     }
 
-    // Wyszukiwanie N najtańszych produktów
     public List<Product> getNCheapest(int n) {
         return products.stream()
                 .sorted(java.util.Comparator.comparingDouble(Product::price))
@@ -49,7 +48,6 @@ public class Cart {
                 .collect(java.util.stream.Collectors.toList());
     }
 
-    // Wyszukiwanie N najdroższych produktów
     public List<Product> getNMostExpensive(int n) {
         return products.stream()
                 .sorted(java.util.Comparator.comparingDouble(Product::price).reversed())

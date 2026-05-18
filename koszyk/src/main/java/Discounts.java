@@ -4,6 +4,7 @@ import java.util.stream.Collectors;
 
 interface DiscountStrategy {
     List<Product> apply(List<Product> products);
+    String getName();
 }
 
 public class Discounts {
@@ -19,6 +20,7 @@ public class Discounts {
             }
             return products;
         }
+        @Override public String getName() { return "Rabat 5% powyżej 300zł"; }
     }
 
     // 2+1 gratis
@@ -31,6 +33,7 @@ public class Discounts {
             sorted.set(lastIndex, sorted.get(lastIndex).withDiscountPrice(0.0));
             return sorted;
         }
+        @Override public String getName() { return "Promocja 2+1 Gratis (najtańszy darmowy)"; }
     }
 
     // darmowy kubek powyżej 200 zł
@@ -44,27 +47,26 @@ public class Discounts {
             }
             return products;
         }
+        @Override public String getName() { return "Darmowy kubek firmowy powyżej 200zł"; }
     }
 
     // logika do zadania dodatkowego
     public static class DiscountOptimizer {
+        public static DiscountStrategy bestStrategy;
+
         public static List<Product> getBestOption(List<Product> baseProducts, List<DiscountStrategy> availableStrategies) {
             List<Product> bestProducts = baseProducts;
             double lowestTotal = Double.MAX_VALUE;
+            bestStrategy = null;
 
             for (DiscountStrategy strategy : availableStrategies) {
-                // wykonujemy promocję na kopii listy
                 List<Product> currentResult = strategy.apply(new ArrayList<>(baseProducts));
-                
-                // liczymy sumę dla tej konkretnej promocji
-                double currentTotal = currentResult.stream()
-                        .mapToDouble(Product::discountPrice)
-                        .sum();
+                double currentTotal = currentResult.stream().mapToDouble(Product::discountPrice).sum();
 
-                // jeśli ta promocja daje niższą cenę niż poprzednie -> zapamiętujemy ją
                 if (currentTotal < lowestTotal) {
                     lowestTotal = currentTotal;
                     bestProducts = currentResult;
+                    bestStrategy = strategy;
                 }
             }
             return bestProducts;

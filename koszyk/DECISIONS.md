@@ -1,13 +1,19 @@
-## Wybór Wzorca Projektowego: Strategia (Strategy Pattern)
+*** Wybór wzorca projektowego -> Strategy czy Command? ***
 
-W celu implementacji systemu promocji zdecydowano się na zastosowanie wzorca projektowego **Strategia (Strategy)**. 
+### Strategia (Strategy Pattern) - każda promocja jako osobna strategia obliczania ceny. 
 
-### Uzasadnienie wyboru:
-* **Dynamiczna wymiana logiki:** Specyfikacja zadania zakłada, że promocje mogą się dynamicznie zmieniać w trakcie działania programu (pojawiać się nowe, znikać stare). Wzorzec Strategia pozwala na wstrzykiwanie algorytmów obliczania zniżek przez interfejs `DiscountStrategy`, co uniezależnia klasę `Cart` od konkretnych implementacji promocji.
 
-* **Zgodność z Open/Closed Principle (OCP):** Dodanie nowej promocji (np. kuponu rabatowego 30%) nie wymaga żadnych modyfikacji w istniejącym kodzie klasy `Cart` ani w innych strategiach. Wystarczy stworzyć nową klasę implementującą interfejs `DiscountStrategy`.
+*** Uzasadnienie wyboru: ***
 
-* **Zadanie dodatkowe (Optymalizator):** Zastosowanie wzorca Strategia umożliwiło łatwe zaimplementowanie klasy `DiscountOptimizer`. Dzięki jednolitemu interfejsowi, optymalizator może w pętli przeliterować po liście dostępnych strategii, wywołać metodę `apply()` na kopii koszyka i bezinwazyjnie porównać, która opcja jest najkorzystniejsza dla klienta.
+### Dynamiczna zmiana promocji:
+    Promocje w sklepie często się zmieniają, a wzorzec Strategia pozwala łatwo podpinać i odpinać różne rabaty w locie.
 
-### Dlaczego nie wzorzec Dowództwo (Command)?
-Wzorzec *Command* doskonale sprawdza się w systemach wymagających operacji wycofywania zmian (Undo/Redo) lub kolejkowania zadań (np. "kliknięto przycisk, dodaj do kolejki zamówień"). W realiach prostego naliczania rabatów w koszyku, gdzie kluczowa jest elastyczność kalkulacji ceny końcowej na żądanie, narzut klas tworzonych przez wzorzec Command byłby zbędną komplikacją systemu (*Overengineering*).
+### Łatwo można dopisać nową promocję -> Zasada Open/Closed (Otwarte na rozbudowę, zamknięte na modyfikacje):
+    Po prostu dopisuję kolejną klasę implementującą interfejs. Nie muszę grzebać w starym, działającym kodzie koszyka, więc niczego przypadkiem nie popsuję.
+
+### Optymalizator porównuje promocję i wybiera najtańszą cenę: 
+    Ponieważ każda promocja ma tę samą metodę apply(), algorytm może łatwo sprawdzić je wszystkie po kolei w pętli. Wykonuje je na kopiach koszyka, porównuje końcowe sumy i wybiera tę najtańszą dla klienta.
+
+
+*** Dlaczego nie Command? ***
+Wzorzec Command ma sens głównie wtedy, gdy potrzebujemy funkcji typu „Cofnij / Ponów” (Undo/Redo) albo chcemy kolejkować zadania do wykonania na później. Do zwykłego przeliczania cen w koszyku byłoby to niepotrzebne komplikowanie kodu (overengineering).
